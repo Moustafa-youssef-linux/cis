@@ -15,18 +15,20 @@
       group: root
       mode: '0644'
       state: touch
-  - shell: "> /usr/share/cis/tasks-status.yml"
+  #- shell: "> /usr/share/cis/tasks-status.yml"
 
   - name: taking backup of /etc/pam.d/system-auth
     copy:
       src: /etc/pam.d/system-auth
       dest: /usr/share/cis
       remote_src: yes
+      force: no
   - name: taking backup of /etc/pam.d/password-auth
     copy:
       src: /etc/pam.d/password-auth
       dest: /usr/share/cis
       remote_src: yes
+      force: no
 
   - name: Ensure password hashing algorithm is SHA-512
     shell: egrep '^password\s+sufficient\s+pam_unix.so' /etc/pam.d/system-auth  | grep sha512
@@ -84,6 +86,37 @@
       line: "{{line['stdout']}} remember=5"
       state: present
 
+  - name: password reuse limit password-auth..Different line
+    shell: egrep -i '^password\s+required' /etc/pam.d/password-auth
+    register: pass_check
+    ignore_errors: yes
+  - debug:
+      msg: "{{ pass_check }} "
+
+
+  - name: adding kernel boot parm
+    lineinfile:
+      path: /etc/pam.d/password-auth
+      line: "{{ pass_check['stdout'] }}"
+      state: absent
+
+  - shell: "> /usr/share/cis/temp_password-auth"
+  - name: write in temp file
+    lineinfile:
+      path: /usr/share/cis/temp_password-auth
+      line: "{{ pass_check['stdout'] }}"
+      state: present
+      create: yes
+  - shell: cat /usr/share/cis/temp_password-auth | cut -d "\"" -f 2
+    register: line_pass
+
+  - debug:
+      msg: "{{ line_pass['stdout'] }}"
+  - lineinfile:
+      path: /etc/pam.d/password-auth
+      line: "{{line_pass['stdout']}} pam_pwhistory.so remember=5"
+
+
 
   - name: password limit system-auth
     shell: egrep -i '^password\s+sufficient\s+pam_unix.so' /etc/pam.d/system-auth
@@ -128,6 +161,7 @@
     copy:
        src: /usr/lib/systemd/system/emergency.service
        dest: /usr/share/cis
+       force: no
   - shell: grep /sbin/sulogin /usr/lib/systemd/system/emergency.service
     register: check
     ignore_errors: yes
@@ -146,6 +180,7 @@
     copy:
        src: /usr/lib/systemd/system/rescue.service
        dest: /usr/share/cis
+       force: no
   - shell: grep /sbin/sulogin /usr/lib/systemd/system/rescue.service
     register: check
     ignore_errors: yes
@@ -162,6 +197,7 @@
     copy:
       src: /etc/security/limits.conf
       dest: /usr/share/cis 
+      force: no
   - lineinfile:
       path: /etc/security/limits.conf
       line: "* hard core 0"
@@ -176,6 +212,7 @@
      src: /etc/passwd
      dest: /usr/share/cis
      remote_src: yes
+     force: no
     when: passwd_backedup.stdout == ""
 
   - name: Ensure no legacy "+" entries exist in /etc/passwd
@@ -339,6 +376,7 @@
       src: /etc/securetty
       dest: /usr/share/cis
       remote_src: yes
+      force: no
 
   - shell: "> /etc/securetty"
 
