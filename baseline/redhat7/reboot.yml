@@ -3,6 +3,8 @@
   hosts: os
   tasks:
     - reboot:
+        
          msg: "Rebooting the Machine with a hostname: {{ ansible_facts['fqdn'] }}"
-         #reboot_timeout: "1200"
+         test_command: "whoami"
+         connect_timeout: 3600
 

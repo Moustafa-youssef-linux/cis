@@ -17,18 +17,18 @@
 
   - replace:
      path: /etc/audit/auditd.conf
-     regexp: '(^admin_space_left_action\s)(.*)?$'
-     replace: 'admin_space_left_action = halt'
+     regexp: '^(admin_space_left_action\s)(.*)?$'
+     replace: 'admin_space_left_action = rotate'
      backup: yes
   - replace:
      path: /etc/audit/auditd.conf
-     regexp: '(^action_mail_acct\s)(.*)?$'
+     regexp: '^(action_mail_acct\s)(.*)?$'
      replace: 'action_mail_acct = root'
      backup: yes
   
   - replace:
        path: /etc/audit/auditd.conf
-       regexp: '(^space_left_action\s)(.*)?$'
+       regexp: '^(space_left_action\s)(.*)?$'
        replace: 'space_left_action = email' 
        backup: yes 
   

@@ -187,6 +187,15 @@
     notify:
       - setting net ipv4 flush param
 
+  - sysctl:
+      name: kernel.softlockup_panic
+      value: "0"
+      sysctl_set: yes
+   
+  - name: Avoiding Bug: soft lockup
+    shell: 'echo "kernel.watchdog_thresh=40" > /etc/sysctl.d/99-watchdog_thresh.conf'
+
+
 
 
   handlers:

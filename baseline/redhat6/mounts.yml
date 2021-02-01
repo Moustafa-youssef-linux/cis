@@ -8,14 +8,6 @@
       loop: "{{ ansible_mounts }}"
       when: item.mount == "/tmp"
 
-    - name: configure tmpfs with the required options
-      copy:
-         src: ./tmp.mount
-         dest: /etc/systemd/system/local-fs.target.wants/tmp.mount
-         #remote_src: yes
-      loop: "{{ ansible_mounts }}"
-      when: item.mount == "/tmp"
-
     - name: remounting TMPFS 
       mount:
         path: /tmp
