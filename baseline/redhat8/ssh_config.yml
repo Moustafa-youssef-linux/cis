@@ -476,3 +476,15 @@
       owner: root
       group: root
       mode: '000'
+
+  - name: Ensure SSH AllowTcpForwarding is disable
+    shell: grep "AllowTcpForwarding yes" /etc/ssh/sshd_config
+    register: tcp_forward_check
+    ignore_errors: yes
+  - lineinfile:
+       path: /etc/ssh/sshd_config
+       line: AllowTcpForwarding no
+       insertafter: yes
+       state: present
+    when: tcp_forward_check.stdout != ""
+
