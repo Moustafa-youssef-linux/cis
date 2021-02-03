@@ -2,32 +2,6 @@
 - name: install the required rpms
   hosts: os
   tasks:
-  - name: install aide
-    yum:
-      name: aide
-      state: present
-    register: ansible_facts
-  - debug:
-     msg: " the data are:  {{ ansible_facts['changed'] }}"
-  - lineinfile:
-        path: /usr/share/cis/tasks-status.yml
-        line: "status2: {{ ansible_facts['changed'] }} ##aide"
-        state: present
-
-  - name: initialize AIDE
-    shell: aide --init
-  - shell: mv /var/lib/aide/aide.db.new.gz /var/lib/aide/aide.db.gz
-
-  - name: adding line in crontab for aide
-    cron:
-      name: aide check
-      weekday: "*"
-      minute: "1"
-      hour: "0"
-      user: "root"
-      job: "/usr/sbin/aide --check"
-      cron_file: jobaid
-  - shell: crontab /etc/cron.d/jobaid
 
 
   - name: remove setroubleshoot

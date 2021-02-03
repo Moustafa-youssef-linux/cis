@@ -21,12 +21,6 @@
   #     state: absent
   #  when: test['status1']
 
-  - name: uninstall aide
-    yum:
-       name: aide
-       state: absent
-    when: test['status2']
-  
   - name: uninstall prelink
     yum:
        name: prelink
