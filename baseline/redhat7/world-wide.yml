@@ -211,13 +211,18 @@
     ignore_errors: yes
 
     
+   - name: check wether there is a GDM profile
+    stat:
+      path: /etc/dconf/profile/gdm
+    register: profile_result
 
   - name: reconfigure /etc/dconf/profile/gdm
     copy:
      src: /etc/dconf/profile/gdm
      dest: /usr/share/cis
      remote_src: yes
-    when: check_gdm.stdout != ""
+    when: check_gdm.stdout != "" and profile_result.stat.exists == True
+
   - blockinfile:
       path: /etc/dconf/profile/gdm
       insertafter: 
