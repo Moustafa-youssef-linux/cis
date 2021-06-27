@@ -211,7 +211,7 @@
     ignore_errors: yes
 
     
-   - name: check wether there is a GDM profile
+   - name: check wether there is a GDM profile file
     stat:
       path: /etc/dconf/profile/gdm
     register: profile_result
